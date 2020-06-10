@@ -27,43 +27,41 @@ with arcpy.da.SearchCursor("NudoDistribucion_view", '*') as cursor:
     for row in cursor:
         arcpy.MakeFeatureLayer_management("NudoDistribucion", "NudoDistribucionSelect_view", "OBJECTID = " + str(row[0]))
         arcpy.SelectLayerByLocation_management("Tubo_view", "INTERSECT", "NudoDistribucionSelect_view")
-        # arcpy.MakeFeatureLayer_management(selectionTubos, "TubosSelect_view")
-        if row[7] == tipoNudoList["NudoT"] and row[7] is not None:
+        if row[8] == tipoNudoList["NudoT"]:
             linea = []
             if int(arcpy.GetCount_management("Tubo_view").getOutput(0)) != 3:
-                linea.append(str(row[0]) + "   " + str(row[12]) + "\n")
+                linea.append(str(row[0]) + "   " + str(row[1]) + "<> 3 tubos conectados" + "\n")
                 f.writelines(linea)
-        if row[7] == tipoNudoList["NudoCambioSeccion"] and row[7] is not None:
+        if row[8] == tipoNudoList["NudoCambioSeccion"]:
             linea = []
             if int(arcpy.GetCount_management("Tubo_view").getOutput(0)) == 2:
-                with arcpy.da.SearchCursor("selectionTubos", '*') as cursorTubos:
+                with arcpy.da.SearchCursor("Tubo_view", '*') as cursorTubos:
                     dimList = []
                     for rowTubos in cursorTubos:
-                        dimList.append(rowTubos[12])
-                        if len(set(dimList)) != 2:
-                            linea.append(str(row[0]) + "   " + str(row[12]) + "\n")
-                            f.writelines(linea)
+                        dimList.append(rowTubos[14])
+                    if len(set(dimList)) != 2:
+                        linea.append(str(row[0]) + "   " + str(row[1]) + "No hay cambio diametro" + "\n")
+                        f.writelines(linea)
             elif int(arcpy.GetCount_management("Tubo_view").getOutput(0)) != 2:
-                linea.append(str(row[0]) + "   " + str(row[12]) + "\n")
+                linea.append(str(row[0]) + "   " + str(row[1]) + "> 2 tubos conectados" + "\n")
                 f.writelines(linea)
-        if row[7] == tipoNudoList["NudoCambioMaterial"] and row[7] is not None:
+        if row[8] == tipoNudoList["NudoCambioMaterial"]:
             linea = []
             if int(arcpy.GetCount_management("Tubo_view").getOutput(0)) == 2:
-                with arcpy.da.SearchCursor("selectionTubos", '*') as cursorTubos:
+                with arcpy.da.SearchCursor("Tubo_view", '*') as cursorTubos:
                     matList = []
                     for rowTubos in cursorTubos:
-                        matList.append(rowTubos[8])
-                        if len(set(matList)) != 2:
-                            linea.append(str(row[0]) + "   " + str(row[12]) + "\n")
-                            f.writelines(linea)
+                        matList.append(rowTubos[9])
+                    if len(set(matList)) != 2:
+                        linea.append(str(row[0]) + "   " + str(row[1]) + "No hay cambio material" + "\n")
+                        f.writelines(linea)
             elif int(arcpy.GetCount_management("Tubo_view").getOutput(0)) != 2:
-                linea.append(str(row[0]) + "   " + str(row[12]) + "\n")
+                linea.append(str(row[0]) + "   " + str(row[1]) + "> 2 tubos conectados" + "\n")
                 f.writelines(linea)
-        if row[7] == tipoNudoList["NudoT"] and row[7] is not None:
+        if row[8] == tipoNudoList["NudoTestero"]:
             linea = []
             if int(arcpy.GetCount_management("Tubo_view").getOutput(0)) != 1:
-                linea.append(str(row[0]) + "   " + str(row[12]) + "\n")
+                linea.append(str(row[0]) + "   " + str(row[1]) + "> 1 tubo conectado" + "\n")
                 f.writelines(linea)
-        # arcpy.Delete_management("TubosSelect_view")
         arcpy.Delete_management("NudoDistribucionSelect_view")
 f.close()
