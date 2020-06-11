@@ -43,7 +43,7 @@ with arcpy.da.SearchCursor("NudoDistribucion_view", '*') as cursor:
                         linea.append(str(row[0]) + "   " + str(row[1]) + "No hay cambio diametro" + "\n")
                         f.writelines(linea)
             elif int(arcpy.GetCount_management("Tubo_view").getOutput(0)) != 2:
-                linea.append(str(row[0]) + "   " + str(row[1]) + "> 2 tubos conectados" + "\n")
+                linea.append(str(row[0]) + "   " + str(row[1]) + "<> 2 tubos conectados" + "\n")
                 f.writelines(linea)
         if row[8] == tipoNudoList["NudoCambioMaterial"]:
             linea = []
@@ -56,7 +56,20 @@ with arcpy.da.SearchCursor("NudoDistribucion_view", '*') as cursor:
                         linea.append(str(row[0]) + "   " + str(row[1]) + "No hay cambio material" + "\n")
                         f.writelines(linea)
             elif int(arcpy.GetCount_management("Tubo_view").getOutput(0)) != 2:
-                linea.append(str(row[0]) + "   " + str(row[1]) + "> 2 tubos conectados" + "\n")
+                linea.append(str(row[0]) + "   " + str(row[1]) + "<> 2 tubos conectados" + "\n")
+                f.writelines(linea)
+        if row[8] == tipoNudoList["NudoCambioAntiguedad"]:
+            linea = []
+            if int(arcpy.GetCount_management("Tubo_view").getOutput(0)) == 2:
+                with arcpy.da.SearchCursor("Tubo_view", '*') as cursorTubos:
+                    matList = []
+                    for rowTubos in cursorTubos:
+                        matList.append(rowTubos[8])
+                    if len(set(matList)) != 2:
+                        linea.append(str(row[0]) + "   " + str(row[1]) + "No hay cambio fecha instalacion" + "\n")
+                        f.writelines(linea)
+            elif int(arcpy.GetCount_management("Tubo_view").getOutput(0)) != 2:
+                linea.append(str(row[0]) + "   " + str(row[1]) + "<> 2 tubos conectados" + "\n")
                 f.writelines(linea)
         if row[8] == tipoNudoList["NudoTestero"]:
             linea = []
